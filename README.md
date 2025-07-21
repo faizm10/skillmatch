@@ -73,23 +73,4 @@
 
 ---
 
-## 📌 **Stretch Features (Optional)**
-
-* OAuth login via GitHub or Google
-* AI-powered recommendations (using cosine similarity or OpenAI embeddings)
-* Hackathon posting board (find/join hackathons)
-* Group chat or team formation
-* Resume feedback + project portfolios
-
----
-
-## 🎯 **Main Goals**
-
-* Learn real-world **GraphQL API** architecture
-* Master **Dockerizing multi-service apps**
-* Apply **Prisma** for database operations
-* Practice **Apollo Client** in frontend
-* Write **unit tests** to validate business logic
-* Build a **showcase-ready project** for job applications
-
----
+`docker-compose up -d`
