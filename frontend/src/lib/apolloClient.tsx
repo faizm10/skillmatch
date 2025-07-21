@@ -1,7 +1,8 @@
 import { ApolloClient, InMemoryCache, HttpLink, ApolloLink } from '@apollo/client';
 
 const httpLink = new HttpLink({
-  uri: 'http://localhost:4000', // backend GraphQL URL (inside Docker this works fine)
+  uri: 'http://localhost:4000/graphql',
+
 });
 
 const authLink = new ApolloLink((operation, forward) => {
@@ -9,7 +10,7 @@ const authLink = new ApolloLink((operation, forward) => {
 
   operation.setContext({
     headers: {
-      authorization: token ? `Bearer ${token}` : '',
+      authorization: token ? `Bearer ${token}` : "",
     },
   });
 

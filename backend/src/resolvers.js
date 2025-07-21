@@ -10,6 +10,9 @@ const resolvers = {
     getUsers: async (_, __, { prisma }) => {
       return await prisma.user.findMany();
     },
+    getUser: async (_, { username }, { prisma }) => {
+      return await prisma.user.findUnique({ where: { username } });
+    },
   },
   Mutation: {
     createUser: async (_, args, { prisma }) => {
