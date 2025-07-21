@@ -75,5 +75,5 @@
 
 ##General Notes
 
-`docker-compose up -d`
-`docker-compose logs [folder name]` use this to detect log errors
+- `docker-compose up -d`
+- `docker-compose logs [folder name]` use this to detect log errors
