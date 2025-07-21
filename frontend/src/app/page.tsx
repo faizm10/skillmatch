@@ -1,285 +1,461 @@
-import Link from "next/link"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users, GitFork, Sparkles, Rocket } from "lucide-react"
+'use client'
+import React, { useState, useEffect } from 'react';
+import { ArrowRight, Users, Zap, Target, Trophy, Star, ChevronDown, Menu, X, Github, Linkedin, Play, Check, TrendingUp, Globe, Shield } from 'lucide-react';
 
-export default function LandingPage() {
+export default function SkillMatchLanding() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const stats = [
+    { number: "50K+", label: "Developers Matched", icon: Users },
+    { number: "2,500+", label: "Teams Formed", icon: Target },
+    { number: "89%", label: "Success Rate", icon: Trophy },
+    { number: "72h", label: "Avg. Match Time", icon: Zap }
+  ];
+
+  const testimonials = [
+    {
+      name: "Sarah Chen",
+      role: "Full-Stack Developer",
+      company: "Winner - EthGlobal 2024",
+      content: "Found my dream team in 6 hours. We won first place and are now building a startup together.",
+      avatar: "SC"
+    },
+    {
+      name: "Marcus Rodriguez",
+      role: "AI/ML Engineer", 
+      company: "TechCrunch Disrupt Finalist",
+      content: "SkillMatch's algorithm perfectly matched our complementary skills. Our prototype got acquired.",
+      avatar: "MR"
+    },
+    {
+      name: "Priya Patel",
+      role: "Product Designer",
+      company: "Y Combinator W24",
+      content: "The team I found here became my co-founders. We just closed our seed round.",
+      avatar: "PP"
+    }
+  ];
+
+  const features = [
+    {
+      icon: Target,
+      title: "Smart Skill Matching",
+      description: "AI-powered algorithm analyzes technical skills, experience levels, and project preferences to find your perfect team match."
+    },
+    {
+      icon: Zap,
+      title: "Instant Team Formation",
+      description: "Get matched with compatible team members in minutes, not days. Start building immediately."
+    },
+    {
+      icon: Shield,
+      title: "Verified Profiles",
+      description: "GitHub integration and skill verification ensure you're working with genuine, qualified developers."
+    },
+    {
+      icon: Globe,
+      title: "Global Community",
+      description: "Connect with talent worldwide. Remote-first approach opens unlimited collaboration possibilities."
+    }
+  ];
+
+  const pricingPlans = [
+    {
+      name: "Free",
+      price: "$0",
+      period: "forever",
+      description: "Perfect for trying out SkillMatch",
+      features: [
+        "Up to 3 team matches per month",
+        "Basic skill matching",
+        "Community access",
+        "Email support"
+      ],
+      cta: "Start Free",
+      popular: false
+    },
+    {
+      name: "Pro",
+      price: "$29",
+      period: "per month",
+      description: "For serious hackathon participants",
+      features: [
+        "Unlimited team matches",
+        "Advanced AI matching",
+        "Priority placement",
+        "Team analytics",
+        "Slack integration",
+        "Priority support"
+      ],
+      cta: "Start Pro Trial",
+      popular: true
+    },
+    {
+      name: "Enterprise",
+      price: "Custom",
+      period: "contact us",
+      description: "For organizations and events",
+      features: [
+        "Custom matching algorithms",
+        "Branded experience",
+        "Admin dashboard",
+        "API access",
+        "Dedicated support",
+        "Custom integrations"
+      ],
+      cta: "Contact Sales",
+      popular: false
+    }
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
-    <div className="flex flex-col min-h-[100dvh] bg-white dark:bg-gray-950">
-      <header className="px-4 lg:px-6 h-16 flex items-center border-b border-gray-200 dark:border-gray-800">
-        <Link href="#" className="flex items-center justify-center" prefetch={false}>
-          <Sparkles className="h-6 w-6 text-gray-900 dark:text-gray-50" />
-          <span className="sr-only">SkillMatch</span>
-          <span className="ml-2 text-xl font-bold text-gray-900 dark:text-gray-50">SkillMatch</span>
-        </Link>
-        <nav className="ml-auto flex gap-6">
-          <Link
-            href="#"
-            className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 transition-colors"
-            prefetch={false}
-          >
-            Features
-          </Link>
-          <Link
-            href="#"
-            className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 transition-colors"
-            prefetch={false}
-          >
-            How it Works
-          </Link>
-          <Link
-            href="#"
-            className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 transition-colors"
-            prefetch={false}
-          >
-            Contact
-          </Link>
-          <Button asChild size="sm" className="px-4 py-2 text-sm font-medium">
-            <Link href="#">Sign In</Link>
-          </Button>
-        </nav>
-      </header>
-      <main className="flex-1">
-        <section className="w-full py-20 md:py-32 lg:py-40 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
-          <div className="container px-4 md:px-6 text-center">
-            <div className="max-w-3xl mx-auto space-y-6">
-              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl text-gray-900 dark:text-gray-50 leading-tight">
-                Find Your Dream Hackathon Team. Instantly.
-              </h1>
-              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                SkillMatch connects students and developers with compatible teammates based on skills, interests, and
-                project goals. Stop searching, start building.
-              </p>
-              <div className="flex flex-col gap-4 sm:flex-row justify-center pt-4">
-                <Button asChild size="lg" className="px-8 py-3 text-lg font-semibold">
-                  <Link href="#">Join SkillMatch</Link>
-                </Button>
-                <Button
-                  variant="outline"
-                  asChild
-                  size="lg"
-                  className="px-8 py-3 text-lg font-semibold border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 bg-transparent"
-                >
-                  <Link href="#">Learn More</Link>
-                </Button>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      {/* Navigation */}
+      <nav className={`fixed w-full z-50 transition-all duration-300 ${
+        isScrolled ? 'bg-white/90 backdrop-blur-md shadow-lg' : 'bg-transparent'
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <div className="flex items-center space-x-2">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+                <Target className="w-6 h-6 text-white" />
               </div>
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                SkillMatch
+              </span>
             </div>
-            <div className="mt-16">
-              <Image
-                src="/placeholder.svg?height=500&width=900"
-                width={900}
-                height={500}
-                alt="SkillMatch Dashboard Preview"
-                className="mx-auto rounded-xl shadow-2xl border border-gray-200 dark:border-gray-800"
-              />
+
+            <div className="hidden md:flex items-center space-x-8">
+              <a href="#features" className="text-gray-700 hover:text-blue-600 transition-colors">Features</a>
+              <a href="#pricing" className="text-gray-700 hover:text-blue-600 transition-colors">Pricing</a>
+              <a href="#testimonials" className="text-gray-700 hover:text-blue-600 transition-colors">Success Stories</a>
+              <button className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-all duration-200 hover:scale-105">
+                Get Started
+              </button>
+            </div>
+
+            <button
+              className="md:hidden"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile menu */}
+        {isMenuOpen && (
+          <div className="md:hidden bg-white border-t shadow-lg">
+            <div className="px-4 py-4 space-y-4">
+              <a href="#features" className="block text-gray-700">Features</a>
+              <a href="#pricing" className="block text-gray-700">Pricing</a>
+              <a href="#testimonials" className="block text-gray-700">Success Stories</a>
+              <button className="w-full bg-blue-600 text-white py-2 rounded-full">
+                Get Started
+              </button>
             </div>
           </div>
-        </section>
+        )}
+      </nav>
 
-        <section className="w-full py-20 md:py-32 bg-white dark:bg-gray-950">
-          <div className="container px-4 md:px-6">
-            <div className="flex flex-col items-center justify-center space-y-4 text-center">
-              <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-gray-900 dark:text-gray-50">
-                  How SkillMatch Works
-                </h2>
-                <p className="max-w-[900px] text-gray-600 md:text-lg dark:text-gray-400">
-                  Our intelligent platform simplifies team formation, so you can focus on innovation.
-                </p>
-              </div>
+      {/* Hero Section */}
+      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center">
+            <div className="inline-flex items-center bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-8 border border-blue-200">
+              <Zap className="w-4 h-4 mr-2" />
+              Join 50,000+ developers finding their dream teams
             </div>
-            <div className="mx-auto grid max-w-5xl items-start gap-8 py-16 lg:grid-cols-3">
-              <Card className="flex flex-col items-center text-center p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
-                <CardHeader>
-                  <Users className="h-10 w-10 text-gray-700 dark:text-gray-300" />
-                  <CardTitle className="mt-4 text-xl font-semibold text-gray-900 dark:text-gray-50">
-                    Create Your Profile
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-gray-600 dark:text-gray-400">
-                    Highlight your skills, interests, and past projects. Let your expertise shine.
-                  </CardDescription>
-                </CardContent>
-              </Card>
-              <Card className="flex flex-col items-center text-center p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
-                <CardHeader>
-                  <GitFork className="h-10 w-10 text-gray-700 dark:text-gray-300" />
-                  <CardTitle className="mt-4 text-xl font-semibold text-gray-900 dark:text-gray-50">
-                    Get Matched Smartly
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-gray-600 dark:text-gray-400">
-                    Our GraphQL engine finds your ideal teammates based on compatibility.
-                  </CardDescription>
-                </CardContent>
-              </Card>
-              <Card className="flex flex-col items-center text-center p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
-                <CardHeader>
-                  <Rocket className="h-10 w-10 text-gray-700 dark:text-gray-300" />
-                  <CardTitle className="mt-4 text-xl font-semibold text-gray-900 dark:text-gray-50">
-                    Build & Innovate
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-gray-600 dark:text-gray-400">
-                    Connect, collaborate, and create something amazing at your next hackathon.
-                  </CardDescription>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
-
-        <section className="w-full py-20 md:py-32 bg-gray-100 dark:bg-gray-900">
-          <div className="container px-4 md:px-6 text-center">
-            <div className="max-w-3xl mx-auto space-y-6">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-gray-900 dark:text-gray-50">
-                For Hackathon Organizers
-              </h2>
-              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400">
-                Empower your participants to form stronger, more effective teams, leading to better projects and a more
-                successful event.
-              </p>
-              <div className="grid md:grid-cols-2 gap-8 mt-12">
-                <Card className="p-6 text-left shadow-sm hover:shadow-md transition-shadow duration-300">
-                  <CardHeader>
-                    <Users className="h-10 w-10 text-gray-700 dark:text-gray-300" />
-                    <CardTitle className="mt-4 text-xl font-semibold text-gray-900 dark:text-gray-50">
-                      Streamlined Team Formation
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription className="text-gray-600 dark:text-gray-400">
-                      Reduce friction in team building, allowing participants to quickly find compatible partners and
-                      focus on coding.
-                    </CardDescription>
-                  </CardContent>
-                </Card>
-                <Card className="p-6 text-left shadow-sm hover:shadow-md transition-shadow duration-300">
-                  <CardHeader>
-                    <Sparkles className="h-10 w-10 text-gray-700 dark:text-gray-300" />
-                    <CardTitle className="mt-4 text-xl font-semibold text-gray-900 dark:text-gray-50">
-                      Higher Quality Projects
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription className="text-gray-600 dark:text-gray-400">
-                      Well-matched teams lead to better collaboration, more innovative ideas, and polished final
-                      projects.
-                    </CardDescription>
-                  </CardContent>
-                </Card>
-                <Card className="p-6 text-left shadow-sm hover:shadow-md transition-shadow duration-300">
-                  <CardHeader>
-                    <Rocket className="h-10 w-10 text-gray-700 dark:text-gray-300" />
-                    <CardTitle className="mt-4 text-xl font-semibold text-gray-900 dark:text-gray-50">
-                      Boost Participant Satisfaction
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription className="text-gray-600 dark:text-gray-400">
-                      A positive team-finding experience enhances the overall hackathon journey for every participant.
-                    </CardDescription>
-                  </CardContent>
-                </Card>
-                <Card className="p-6 text-left shadow-sm hover:shadow-md transition-shadow duration-300">
-                  <CardHeader>
-                    <GitFork className="h-10 w-10 text-gray-700 dark:text-gray-300" />
-                    <CardTitle className="mt-4 text-xl font-semibold text-gray-900 dark:text-gray-50">
-                      Seamless Integration
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription className="text-gray-600 dark:text-gray-400">
-                      Easy to introduce to your hackathon, providing a valuable tool without adding complexity.
-                    </CardDescription>
-                  </CardContent>
-                </Card>
-              </div>
-              <Button asChild size="lg" className="px-8 py-3 text-lg font-semibold mt-12">
-                <Link href="#">Partner with Us</Link>
-              </Button>
-            </div>
-          </div>
-        </section>
-
-        <section className="w-full py-20 md:py-32 bg-gray-50 dark:bg-gray-900">
-          <div className="container px-4 md:px-6 text-center">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-gray-900 dark:text-gray-50">
-              What Our Users Say
-            </h2>
-            <p className="max-w-[700px] mx-auto mt-4 text-gray-600 md:text-lg dark:text-gray-400">
-              Hear from developers and students who found their perfect team with SkillMatch.
+            
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+              Find Your Perfect
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent block">
+                Hackathon Team
+              </span>
+            </h1>
+            
+            <p className="text-xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
+              Stop wasting time on mismatched teams. Our AI-powered platform connects you with developers 
+              who complement your skills and share your vision. Build winning projects, faster.
             </p>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-              <Card className="p-6 text-left shadow-sm hover:shadow-md transition-shadow duration-300">
-                <CardContent className="space-y-4">
-                  <p className="text-lg italic text-gray-700 dark:text-gray-300">
-                    &quot;SkillMatch saved my hackathon! Found a brilliant backend dev in minutes. Highly
-                    recommend.&quot;
-                  </p>
-                  <div className="font-semibold text-gray-900 dark:text-gray-50">- Alex P., Student Developer</div>
-                </CardContent>
-              </Card>
-              <Card className="p-6 text-left shadow-sm hover:shadow-md transition-shadow duration-300">
-                <CardContent className="space-y-4">
-                  <p className="text-lg italic text-gray-700 dark:text-gray-300">
-                    &quot;The matching algorithm is spot on. No more random teams, just pure compatibility.&quot;
-                  </p>
-                  <div className="font-semibold text-gray-900 dark:text-gray-50">- Sarah L., Software Engineer</div>
-                </CardContent>
-              </Card>
-              <Card className="p-6 text-left shadow-sm hover:shadow-md transition-shadow duration-300">
-                <CardContent className="space-y-4">
-                  <p className="text-lg italic text-gray-700 dark:text-gray-300">
-                    &quot;Finally, a platform that understands hackathon needs. The messaging feature is a
-                    game-changer.&quot;
-                  </p>
-                  <div className="font-semibold text-gray-900 dark:text-gray-50">- Chris T., Hackathon Organizer</div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
 
-        <section className="w-full py-20 md:py-32 bg-white dark:bg-gray-950">
-          <div className="container px-4 md:px-6 text-center">
-            <div className="max-w-3xl mx-auto space-y-6">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-gray-900 dark:text-gray-50">
-                Ready to Find Your Team?
-              </h2>
-              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400">
-                Join SkillMatch today and unlock your hackathon potential.
-              </p>
-              <Button asChild size="lg" className="px-10 py-4 text-xl font-semibold mt-8">
-                <Link href="#">Get Started Now</Link>
-              </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+              <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-2xl transition-all duration-300 hover:scale-105 flex items-center">
+                Start Matching Now
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </button>
+              
+              <button className="flex items-center text-gray-700 hover:text-blue-600 transition-colors px-6 py-4">
+                <Play className="w-5 h-5 mr-2" />
+                Watch Demo (2 min)
+              </button>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+              {stats.map((stat, index) => {
+                const Icon = stat.icon;
+                return (
+                  <div key={index} className="text-center">
+                    <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-3">
+                      <Icon className="w-6 h-6 text-blue-600" />
+                    </div>
+                    <div className="text-3xl font-bold text-gray-900 mb-1">{stat.number}</div>
+                    <div className="text-sm text-gray-600">{stat.label}</div>
+                  </div>
+                );
+              })}
             </div>
           </div>
-        </section>
-      </main>
-      <footer className="flex flex-col gap-2 sm:flex-row py-8 w-full shrink-0 items-center px-4 md:px-6 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
-        <p className="text-xs text-gray-500 dark:text-gray-400">&copy; {"2024 SkillMatch. All rights reserved."}</p>
-        <nav className="sm:ml-auto flex gap-4 sm:gap-6">
-          <Link
-            href="#"
-            className="text-xs text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 transition-colors"
-            prefetch={false}
-          >
-            Terms of Service
-          </Link>
-          <Link
-            href="#"
-            className="text-xs text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50 transition-colors"
-            prefetch={false}
-          >
-            Privacy Policy
-          </Link>
-        </nav>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section id="features" className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Why Teams Choose SkillMatch
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Built by hackathon winners for hackathon winners. Every feature is designed 
+              to eliminate friction and maximize your chances of success.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <div key={index} className="bg-gradient-to-br from-slate-50 to-blue-50 p-8 rounded-2xl hover:shadow-xl transition-all duration-300 hover:scale-105 border border-blue-100">
+                  <div className="w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center mb-6">
+                    <Icon className="w-7 h-7 text-white" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Social Proof */}
+      <section id="testimonials" className="py-20 bg-gradient-to-br from-blue-50 to-purple-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Success Stories
+            </h2>
+            <p className="text-xl text-gray-600">
+              Real teams, real wins, real startups born from SkillMatch connections
+            </p>
+          </div>
+
+          <div className="relative max-w-4xl mx-auto">
+            <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl">
+              <div className="flex items-center mb-6">
+                <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg mr-4">
+                  {testimonials[activeTestimonial].avatar}
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-900 text-lg">
+                    {testimonials[activeTestimonial].name}
+                  </div>
+                  <div className="text-gray-600">
+                    {testimonials[activeTestimonial].role} • {testimonials[activeTestimonial].company}
+                  </div>
+                </div>
+              </div>
+              
+              <blockquote className="text-xl text-gray-700 leading-relaxed mb-6">
+                "{testimonials[activeTestimonial].content}"
+              </blockquote>
+              
+              <div className="flex justify-center space-x-2">
+                {testimonials.map((_, index) => (
+                  <button
+                    key={index}
+                    className={`w-3 h-3 rounded-full transition-colors ${
+                      index === activeTestimonial ? 'bg-blue-600' : 'bg-gray-300'
+                    }`}
+                    onClick={() => setActiveTestimonial(index)}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Trust badges */}
+          <div className="mt-16 text-center">
+            <p className="text-sm text-gray-500 mb-6">Trusted by teams from</p>
+            <div className="flex justify-center items-center space-x-8 opacity-60">
+              <div className="font-bold text-2xl text-gray-700">MIT</div>
+              <div className="font-bold text-2xl text-gray-700">Stanford</div>
+              <div className="font-bold text-2xl text-gray-700">Google</div>
+              <div className="font-bold text-2xl text-gray-700">Meta</div>
+              <div className="font-bold text-2xl text-gray-700">OpenAI</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section id="pricing" className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Simple, Transparent Pricing
+            </h2>
+            <p className="text-xl text-gray-600">
+              Start free, scale as you grow. No hidden fees, no surprises.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {pricingPlans.map((plan, index) => (
+              <div key={index} className={`relative bg-gradient-to-br from-slate-50 to-blue-50 p-8 rounded-3xl border-2 transition-all duration-300 hover:shadow-2xl hover:scale-105 ${
+                plan.popular ? 'border-blue-500 shadow-xl' : 'border-gray-200'
+              }`}>
+                {plan.popular && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full text-sm font-semibold">
+                      Most Popular
+                    </span>
+                  </div>
+                )}
+                
+                <div className="text-center mb-8">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
+                  <div className="mb-4">
+                    <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                    <span className="text-gray-600 ml-2">/{plan.period}</span>
+                  </div>
+                  <p className="text-gray-600">{plan.description}</p>
+                </div>
+
+                <ul className="space-y-4 mb-8">
+                  {plan.features.map((feature, featureIndex) => (
+                    <li key={featureIndex} className="flex items-start">
+                      <Check className="w-5 h-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <button className={`w-full py-3 px-6 rounded-full font-semibold transition-all duration-200 ${
+                  plan.popular 
+                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg hover:scale-105' 
+                    : 'bg-white text-gray-900 border border-gray-300 hover:bg-gray-50'
+                }`}>
+                  {plan.cta}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600">
+        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+          <h2 className="text-4xl font-bold text-white mb-6">
+            Ready to Build Something Amazing?
+          </h2>
+          <p className="text-xl text-blue-100 mb-10 leading-relaxed">
+            Join thousands of developers who've found their perfect team match. 
+            Your next breakthrough project starts with the right team.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <button className="bg-white text-blue-600 px-8 py-4 rounded-full text-lg font-semibold hover:shadow-2xl transition-all duration-300 hover:scale-105 flex items-center">
+              Start Your Free Trial
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </button>
+            
+            <button className="text-white hover:text-blue-100 transition-colors px-6 py-4 flex items-center">
+              <Github className="w-5 h-5 mr-2" />
+              Connect with GitHub
+            </button>
+          </div>
+
+          <div className="mt-10 text-blue-100 text-sm">
+            🚀 No credit card required • 🔒 Cancel anytime • ⚡ Setup in 2 minutes
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-gray-300 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center space-x-2 mb-4">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                  <Target className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-xl font-bold text-white">SkillMatch</span>
+              </div>
+              <p className="text-gray-400 leading-relaxed">
+                The future of hackathon team formation. Built by developers, for developers.
+              </p>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold text-white mb-4">Product</h4>
+              <ul className="space-y-2">
+                <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">API</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Integrations</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold text-white mb-4">Company</h4>
+              <ul className="space-y-2">
+                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold text-white mb-4">Connect</h4>
+              <div className="flex space-x-4">
+                <a href="#" className="hover:text-white transition-colors">
+                  <Github className="w-6 h-6" />
+                </a>
+                <a href="#" className="hover:text-white transition-colors">
+                  <Linkedin className="w-6 h-6" />
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
+            <p>&copy; 2025 SkillMatch. All rights reserved.</p>
+          </div>
+        </div>
       </footer>
     </div>
-  )
+  );
 }
