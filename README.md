@@ -78,3 +78,7 @@
 - `docker-compose up -d` use this to run the servers
 - `docker-compose up --build` use this to build newest versions
 - `docker-compose logs [folder name]` use this to detect log errors
+
+Running Locally for Frontend and Backend and DB:
+- db: `docker-compose up postgres`
+- backend || frontend: `npm run dev`
