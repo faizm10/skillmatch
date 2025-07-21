@@ -1,17 +1,25 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import { gql, useQuery } from "@apollo/client";
-import { useRouter } from "next/navigation";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { useEffect, useState } from "react"
+import { gql, useQuery } from "@apollo/client"
+import { useRouter } from "next/navigation"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { 
+  User, 
+  Mail, 
+  Calendar, 
+  Trophy, 
+  Users, 
+  Search, 
+  Settings,
+  Plus,
+  TrendingUp,
+  Award,
+  Clock,
+  Star
+} from "lucide-react"
 
 const GET_USER = gql`
   query GetUser($username: String!) {
@@ -26,179 +34,410 @@ const GET_USER = gql`
       createdAt
     }
   }
-`;
+`
 
 function getCookie(name: string) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
-  return null;
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop()?.split(";").shift() || null
+  return null
 }
 
+// Mock data for demonstration
+const mockStats = {
+  hackathonsJoined: 12,
+  teamsFormed: 8,
+  projectsCompleted: 15,
+  matchScore: 94
+}
+
+const mockRecentActivity = [
+  { id: 1, type: "hackathon", title: "AI Innovation Challenge 2024", date: "2 days ago", status: "registered" },
+  { id: 2, type: "team", title: "Joined team 'Code Crusaders'", date: "5 days ago", status: "active" },
+  { id: 3, type: "project", title: "Submitted 'EcoTrack App'", date: "1 week ago", status: "completed" }
+]
+
+const mockRecommendations = [
+  { id: 1, name: "Sarah Chen", skills: ["React", "Python", "UI/UX"], match: 92 },
+  { id: 2, name: "Alex Rodriguez", skills: ["Node.js", "GraphQL", "AWS"], match: 89 },
+  { id: 3, name: "Emma Thompson", skills: ["Machine Learning", "TensorFlow"], match: 87 }
+]
+
 export default function DashboardPage() {
-  const [username, setUsername] = useState<string | null>(null);
-  const [ready, setReady] = useState(false);
-  const router = useRouter();
+  const [username, setUsername] = useState<string | null>(null)
+  const router = useRouter()
 
   useEffect(() => {
-    const cookieUsername = getCookie("username");
-    setUsername(cookieUsername);
-    setReady(true);
-  }, []);
+    setUsername(getCookie("username"))
+  }, [])
 
   const { data, loading, error } = useQuery(GET_USER, {
     variables: { username },
-    skip: !ready || !username,
+    skip: !username,
     fetchPolicy: "network-only",
-    errorPolicy: "all", //debugging purposes
-    onError: (error) => {
-      console.error("GraphQL Error:", error);
-      console.error("Network Error:", error.networkError);
-      console.error("GraphQL Errors:", error.graphQLErrors);
-    },
-    onCompleted: (data) => {
-      console.log("Query completed successfully:", data);
-    }
-  });
+  })
 
-  if (!ready) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-blue-50 p-8 dark:bg-neutral-900">
-        <Card className="w-full max-w-md p-6 text-center">
-          <CardTitle>Loading...</CardTitle>
-          <CardDescription className="mt-2">Checking login status.</CardDescription>
-        </Card>
-      </div>
-    );
+  const handleLogout = () => {
+    document.cookie = "username=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
+    router.push("/login")
   }
 
   if (!username) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-blue-50 p-8 dark:bg-neutral-900">
-        <Card className="w-full max-w-md p-6 text-center">
-          <CardTitle className="mb-4">Not Logged In</CardTitle>
-          <CardDescription className="mb-6">
-            Please log in to view your dashboard.
-          </CardDescription>
-          <Button onClick={() => router.push("/login")}>Go to Login</Button>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-8 dark:from-neutral-900 dark:to-neutral-800">
+        <Card className="w-full max-w-md p-8 text-center shadow-xl">
+          <div className="mb-6">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
+              <User className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+            </div>
+            <CardTitle className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              Welcome to SkillMatch
+            </CardTitle>
+            <CardDescription className="mt-2 text-gray-600 dark:text-gray-400">
+              Please log in to access your hackathon dashboard
+            </CardDescription>
+          </div>
+          <Button 
+            onClick={() => router.push("/login")} 
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+          >
+            Go to Login
+          </Button>
         </Card>
       </div>
-    );
+    )
   }
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-blue-50 p-8 dark:bg-neutral-900">
-        <Card className="w-full max-w-md p-6 text-center">
-          <CardTitle>Loading...</CardTitle>
-          <CardDescription className="mt-2">Loading your data.</CardDescription>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-neutral-900 dark:to-neutral-800">
+        <Card className="w-full max-w-md p-8 text-center">
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div>
+          <CardTitle className="text-xl">Loading Dashboard...</CardTitle>
+          <CardDescription className="mt-2">Getting your latest data</CardDescription>
         </Card>
       </div>
-    );
+    )
   }
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-blue-50 p-8 dark:bg-neutral-900">
-        <Card className="w-full max-w-md p-6 text-center">
-          <CardTitle className="text-red-600">Error Loading Data</CardTitle>
-          <CardDescription className="mt-2">
-            An error occurred: {error.message}. Please try again.
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-red-50 to-pink-100 dark:from-neutral-900 dark:to-red-900">
+        <Card className="w-full max-w-md p-8 text-center border-red-200 dark:border-red-800">
+          <CardTitle className="text-red-600 dark:text-red-400">Something went wrong</CardTitle>
+          <CardDescription className="mt-2 text-gray-600 dark:text-gray-400">
+            {error.message}
           </CardDescription>
-          <Button onClick={handleLogout} className="mt-6">
-            Logout
+          <Button onClick={handleLogout} variant="destructive" className="mt-6">
+            Return to Login
           </Button>
         </Card>
       </div>
-    );
+    )
   }
 
-  const user = data?.getUser;
+  const user = data?.getUser
 
   if (!user) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-blue-50 p-8 dark:bg-neutral-900">
-        <Card className="w-full max-w-md p-6 text-center">
-          <CardTitle className="mb-4">User Not Found</CardTitle>
-          <CardDescription className="mb-6">
-            The requested user could not be found.
-          </CardDescription>
-          <Button onClick={handleLogout}>Logout</Button>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-yellow-50 to-orange-100 dark:from-neutral-900 dark:to-yellow-900">
+        <Card className="w-full max-w-md p-8 text-center">
+          <CardTitle className="text-yellow-600 dark:text-yellow-400">Profile Not Found</CardTitle>
+          <CardDescription className="mt-2">We couldn't find your profile data</CardDescription>
+          <Button onClick={handleLogout} variant="outline" className="mt-6">
+            Return to Login
+          </Button>
         </Card>
       </div>
-    );
-  }
-
-  function handleLogout() {
-    document.cookie = "username=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-    router.push("/login");
+    )
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-blue-50 p-8 dark:bg-neutral-900">
-      <Card className="w-full max-w-2xl p-8">
-        <CardHeader>
-          <CardTitle className="mb-2 text-2xl font-bold">Welcome, {user.name}!</CardTitle>
-          <CardDescription className="mb-4">
-            Here are your details and interests.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4 p-0">
-          <div>
-            <p className="text-md font-medium text-neutral-700 dark:text-neutral-300">
-              Email:
-            </p>
-            <p className="text-lg text-neutral-800 dark:text-neutral-200">{user.email}</p>
-          </div>
-          <div>
-            <p className="text-md font-medium text-neutral-700 dark:text-neutral-300">
-              Username:
-            </p>
-            <p className="text-lg text-neutral-800 dark:text-neutral-200">{user.username}</p>
-          </div>
-          <div>
-            <p className="text-md font-medium text-neutral-700 dark:text-neutral-300">
-              Bio:
-            </p>
-            <p className="text-lg text-neutral-800 dark:text-neutral-200">{user.bio || "No bio provided."}</p>
-          </div>
-          <div>
-            <p className="text-md font-medium text-neutral-700 dark:text-neutral-300">
-              Skills:
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {user.skills && user.skills.length > 0 ? (
-                user.skills.map((skill: string, idx: number) => (
-                  <Badge key={idx} className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                    {skill}
-                  </Badge>
-                ))
-              ) : (
-                <span className="text-neutral-500">No skills listed.</span>
-              )}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900">
+      {/* Header */}
+      <header className="border-b border-white/20 bg-white/80 backdrop-blur-sm dark:border-neutral-700/50 dark:bg-neutral-900/80">
+        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-indigo-600">
+                <Trophy className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">SkillMatch</h1>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Hackathon Dashboard</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <Button variant="outline" size="sm">
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
+              </Button>
+              <Button onClick={handleLogout} variant="destructive" size="sm">
+                Logout
+              </Button>
             </div>
           </div>
-          <div>
-            <p className="text-md font-medium text-neutral-700 dark:text-neutral-300">
-              Interests:
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {user.interests && user.interests.length > 0 ? (
-                user.interests.map((interest: string, idx: number) => (
-                  <Badge key={idx} className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                    {interest}
-                  </Badge>
-                ))
-              ) : (
-                <span className="text-neutral-500">No interests listed.</span>
-              )}
-            </div>
+        </div>
+      </header>
+
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {/* Welcome Section */}
+        <div className="mb-8">
+          <Card className="border-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-xl">
+            <CardContent className="p-8">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-3xl font-bold mb-2">Welcome back, {user.name}! 👋</h2>
+                  <p className="text-blue-100 text-lg">Ready to build something amazing?</p>
+                </div>
+                <div className="hidden sm:block">
+                  <div className="flex items-center space-x-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold">{mockStats.matchScore}%</div>
+                      <div className="text-xs text-blue-200">Match Score</div>
+                    </div>
+                    <div className="h-12 w-px bg-blue-400"></div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold">{mockStats.hackathonsJoined}</div>
+                      <div className="text-xs text-blue-200">Hackathons</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{mockStats.hackathonsJoined}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Hackathons Joined</p>
+                </div>
+                <Calendar className="h-8 w-8 text-blue-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{mockStats.teamsFormed}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Teams Formed</p>
+                </div>
+                <Users className="h-8 w-8 text-green-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{mockStats.projectsCompleted}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Projects Done</p>
+                </div>
+                <Award className="h-8 w-8 text-purple-600" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{mockStats.matchScore}%</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Match Score</p>
+                </div>
+                <TrendingUp className="h-8 w-8 text-orange-600" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid gap-8 lg:grid-cols-3">
+          {/* Profile Section */}
+          <div className="lg:col-span-2 space-y-6">
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+              <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+                <CardTitle className="flex items-center text-xl">
+                  <User className="h-5 w-5 mr-2 text-blue-600" />
+                  Your Profile
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-xl font-bold text-white">
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{user.name}</h3>
+                      <p className="text-gray-600 dark:text-gray-400 flex items-center">
+                        <Mail className="h-4 w-4 mr-1" />
+                        {user.email}
+                      </p>
+                      <p className="text-gray-600 dark:text-gray-400">@{user.username}</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Bio</h4>
+                    <p className="text-gray-700 dark:text-gray-300">{user.bio || "No bio provided yet. Add one to help teammates get to know you better!"}</p>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Skills</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {user.skills && user.skills.length > 0 ? (
+                        user.skills.map((skill: string) => (
+                          <Badge
+                            key={skill}
+                            className="bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 px-3 py-1"
+                          >
+                            {skill}
+                          </Badge>
+                        ))
+                      ) : (
+                        <p className="text-gray-500 italic">No skills listed yet. Add some to help others find you!</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Interests</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {user.interests && user.interests.length > 0 ? (
+                        user.interests.map((interest: string) => (
+                          <Badge
+                            key={interest}
+                            className="bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900/30 dark:text-purple-400 px-3 py-1"
+                          >
+                            {interest}
+                          </Badge>
+                        ))
+                      ) : (
+                        <p className="text-gray-500 italic">No interests listed yet. Share what excites you!</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex space-x-3 pt-4">
+                    <Button className="bg-blue-600 hover:bg-blue-700">
+                      <Settings className="h-4 w-4 mr-2" />
+                      Edit Profile
+                    </Button>
+                    <Button variant="outline">
+                      <Search className="h-4 w-4 mr-2" />
+                      Find Teams
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Recent Activity */}
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+              <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+                <CardTitle className="flex items-center text-xl">
+                  <Clock className="h-5 w-5 mr-2 text-green-600" />
+                  Recent Activity
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  {mockRecentActivity.map((activity) => (
+                    <div key={activity.id} className="flex items-center space-x-4 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
+                      <div className={`flex h-10 w-10 items-center justify-center rounded-full ${
+                        activity.type === 'hackathon' ? 'bg-blue-100 text-blue-600' :
+                        activity.type === 'team' ? 'bg-green-100 text-green-600' :
+                        'bg-purple-100 text-purple-600'
+                      }`}>
+                        {activity.type === 'hackathon' ? <Calendar className="h-5 w-5" /> :
+                         activity.type === 'team' ? <Users className="h-5 w-5" /> :
+                         <Award className="h-5 w-5" />}
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-900 dark:text-white">{activity.title}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{activity.date}</p>
+                      </div>
+                      <Badge variant={activity.status === 'completed' ? 'default' : 'secondary'}>
+                        {activity.status}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </div>
-          <Button onClick={handleLogout} className="mt-8 w-full">
-            Logout
-          </Button>
-        </CardContent>
-      </Card>
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Quick Actions */}
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-lg">Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Join Hackathon
+                </Button>
+                <Button variant="outline" className="w-full">
+                  <Search className="h-4 w-4 mr-2" />
+                  Find Teammates
+                </Button>
+                <Button variant="outline" className="w-full">
+                  <Trophy className="h-4 w-4 mr-2" />
+                  Browse Projects
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Recommended Teammates */}
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center">
+                  <Star className="h-5 w-5 mr-2 text-yellow-500" />
+                  Recommended Teammates
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {mockRecommendations.map((person) => (
+                  <div key={person.id} className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-medium text-gray-900 dark:text-white">{person.name}</h4>
+                      <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                        {person.match}% match
+                      </Badge>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {person.skills.slice(0, 2).map((skill) => (
+                        <Badge key={skill} variant="outline" className="text-xs">
+                          {skill}
+                        </Badge>
+                      ))}
+                      {person.skills.length > 2 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{person.skills.length - 2} more
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                <Button variant="outline" className="w-full">
+                  View All Recommendations
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
     </div>
-  );
+  )
 }
