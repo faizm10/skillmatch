@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
+import { useRouter } from "next/navigation";
 
 const CREATE_USER = gql`
   mutation CreateUser($name: String!, $email: String!, $bio: String, $skills: [String!]!, $interests: [String!]!) {
@@ -25,6 +26,7 @@ export default function SignupPage() {
   const [interests, setInterests] = useState("");
   const [createdUser, setCreatedUser] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState("");
+  const router = useRouter();
   const [createUser, { loading }] = useMutation(CREATE_USER, {
     onCompleted: (data) => {
       setCreatedUser(data.createUser);
@@ -34,6 +36,8 @@ export default function SignupPage() {
       setBio("");
       setSkills("");
       setInterests("");
+      // Redirect to dashboard after signup
+      router.push("/dashboard");
     },
     onError: (error) => {
       setErrorMsg(error.message);

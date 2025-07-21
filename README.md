@@ -75,6 +75,6 @@
 
 ##General Notes
 
-- `docker-compose up -d`
-- `docker-compose up --build`
+- `docker-compose up -d` use this to run the servers
+- `docker-compose up --build` use this to build newest versions
 - `docker-compose logs [folder name]` use this to detect log errors

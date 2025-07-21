@@ -12,6 +12,7 @@ const typeDefs = gql`
     id: ID!
     name: String!
     email: String!
+    username: String!   # <-- Add this line
     bio: String
     skills: [String!]!
     interests: [String!]!
@@ -26,10 +27,12 @@ const typeDefs = gql`
     createUser(
       name: String!
       email: String!
+      username: String!   # <-- Add this line
       bio: String
       skills: [String!]!
       interests: [String!]!
     ): User!
+    
   }
 `;
 
