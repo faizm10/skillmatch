@@ -27,10 +27,6 @@ const navItems = [
     link: "#testimonials",
   },
   {
-    name: "Pricing",
-    link: "#pricing",
-  },
-  {
     name: "FAQ",
     link: "#faq",
   },
