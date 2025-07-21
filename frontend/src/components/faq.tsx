@@ -3,6 +3,7 @@
 import { motion } from "motion/react"
 import { useState } from "react"
 import { ChevronDown } from "lucide-react"
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "./ui/accordion"
 
 const faqs = [
   {
@@ -38,12 +39,6 @@ const faqs = [
 ]
 
 export default function FAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null)
-
-  const toggleFAQ = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index)
-  }
-
   return (
     <section id="faq" className="py-20">
       <div className="container mx-auto px-4">
@@ -67,41 +62,15 @@ export default function FAQ() {
             Everything you need to know about SkillMatch
           </motion.p>
         </div>
-
         <div className="mx-auto max-w-3xl">
-          {faqs.map((faq, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              className={`mb-4 overflow-hidden rounded-lg border ${
-                openIndex === index
-                  ? "border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-900/20"
-                  : "border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900"
-              }`}
-            >
-              <button
-                className="flex w-full items-center justify-between p-6 text-left"
-                onClick={() => toggleFAQ(index)}
-              >
-                <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">{faq.question}</h3>
-                <ChevronDown
-                  className={`h-5 w-5 text-slate-600 transition-transform dark:text-slate-400 ${
-                    openIndex === index ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-              <div
-                className={`px-6 transition-all duration-300 ${
-                  openIndex === index ? "pb-6 opacity-100" : "h-0 opacity-0"
-                }`}
-              >
-                <p className="text-slate-600 dark:text-slate-400">{faq.answer}</p>
-              </div>
-            </motion.div>
-          ))}
+          <Accordion type="single" collapsible>
+            {faqs.map((faq, index) => (
+              <AccordionItem key={index} value={String(index)}>
+                <AccordionTrigger>{faq.question}</AccordionTrigger>
+                <AccordionContent>{faq.answer}</AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
       </div>
     </section>
