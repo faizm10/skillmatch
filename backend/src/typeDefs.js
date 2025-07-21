@@ -12,10 +12,11 @@ const typeDefs = gql`
     id: ID!
     name: String!
     email: String!
-    username: String!   # <-- Add this line
+    username: String!
     bio: String
     skills: [String!]!
     interests: [String!]!
+    password: String
     createdAt: String!
   }
 
@@ -27,12 +28,16 @@ const typeDefs = gql`
     createUser(
       name: String!
       email: String!
-      username: String!   # <-- Add this line
+      username: String!
       bio: String
       skills: [String!]!
       interests: [String!]!
+      password: String!
     ): User!
-    
+    login(
+      username: String!
+      password: String!
+    ): User!
   }
 `;
 

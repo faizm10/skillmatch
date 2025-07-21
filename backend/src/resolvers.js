@@ -15,6 +15,17 @@ const resolvers = {
     createUser: async (_, args, { prisma }) => {
       return await prisma.user.create({ data: args });
     },
+    login: async (_, { username, password }, { prisma }) => {
+      const user = await prisma.user.findUnique({ where: { username } });
+      if (!user) {
+        throw new Error('User not found');
+      }
+      // For demo: compare plaintext passwords (do NOT do this in production)
+      if (user.password !== password) {
+        throw new Error('Invalid password');
+      }
+      return user;
+    },
   },
 };
 
