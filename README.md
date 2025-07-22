@@ -39,11 +39,6 @@
 * “Like” profiles
 * Filters for skills, tech stack, hackathon type
 
-### 🧪 Unit Testing
-
-* GraphQL resolver tests (e.g., match scoring logic)
-* React component + form validation tests
-
 ### 🐳 Dockerization
 
 * `frontend`: Next.js (on port 3000)
