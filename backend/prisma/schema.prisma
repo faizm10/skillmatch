@@ -23,6 +23,10 @@ model User {
   bio        String?
   skills     String[]
   interests  String[]
+  devpost  String?
+github   String?
+linkedin String?
+website  String?
   createdAt  DateTime @default(now())
   
   // Relationships
