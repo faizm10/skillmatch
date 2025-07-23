@@ -100,16 +100,55 @@ export default function HackathonsPage() {
   }
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-neutral-900 dark:to-neutral-800">
-        <Card className="w-full max-w-md p-8 text-center">
-          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div>
-          <CardTitle className="text-xl">Loading Your Hackathons...</CardTitle>
-          <CardDescription className="mt-2">Getting your registered hackathons</CardDescription>
-        </Card>
-      </div>
-    )
-  }
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-neutral-900 dark:to-neutral-800">
+      <Card className="w-full max-w-md p-8 text-center border-0 shadow-xl bg-white/80 dark:bg-neutral-800/80 backdrop-blur-sm">
+        {/* Animated Logo/Icon */}
+        <div className="relative mx-auto mb-6 h-20 w-20">
+          {/* Outer rotating ring */}
+          <div className="absolute inset-0 rounded-full border-4 border-blue-200 dark:border-blue-800 animate-spin"></div>
+          {/* Inner pulsing circle */}
+          <div className="absolute inset-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 animate-pulse opacity-80"></div>
+          {/* Center icon */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="h-8 w-8 rounded-lg bg-white dark:bg-neutral-800 flex items-center justify-center shadow-sm">
+              <svg className="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* Animated text */}
+        <CardTitle className="text-xl mb-3 text-gray-800 dark:text-gray-100">
+          Loading Your Hackathons
+          <span className="inline-flex ml-1">
+            <span className="animate-bounce">.</span>
+            <span className="animate-bounce" style={{ animationDelay: '0.1s' }}>.</span>
+            <span className="animate-bounce" style={{ animationDelay: '0.2s' }}>.</span>
+          </span>
+        </CardTitle>
+        
+        <CardDescription className="text-gray-600 dark:text-gray-300 mb-6">
+          Getting your registered hackathons
+        </CardDescription>
+
+        {/* Progress bar */}
+        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-4 overflow-hidden">
+          <div className="h-full bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full animate-pulse"></div>
+        </div>
+
+        {/* Loading steps animation */}
+        <div className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
+          <div className="flex items-center justify-center space-x-2">
+            <div className="w-2 h-2 bg-blue-500 rounded-full animate-ping"></div>
+            <span>Fetching your data...</span>
+          </div>
+        </div>
+      </Card>
+    </div>
+  )
+}
 
   if (error) {
     return (
