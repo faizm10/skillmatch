@@ -64,12 +64,12 @@ export default function FAQ() {
         </div>
         <div className="mx-auto max-w-3xl">
           <Accordion type="single" collapsible>
-            {faqs.map((faq, index) => (
+          {faqs.map((faq, index) => (
               <AccordionItem key={index} value={String(index)}>
                 <AccordionTrigger>{faq.question}</AccordionTrigger>
                 <AccordionContent>{faq.answer}</AccordionContent>
               </AccordionItem>
-            ))}
+          ))}
           </Accordion>
         </div>
       </div>

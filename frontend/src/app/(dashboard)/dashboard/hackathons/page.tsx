@@ -192,12 +192,11 @@ export default function HackathonsPage() {
               const startDate = formatDate(hackathon.date)
               const endDate = formatDate(hackathon.endDate)
               const dateRange = `${startDate} - ${endDate}`
-              const participantCount = hackathon.participants?.length || 0
               const status = getHackathonStatus(hackathon.date, hackathon.endDate)
 
               return (
-                <Card key={hackathon.id} className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-shadow">
-                  <CardHeader>
+                <Card key={hackathon.id} className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-shadow flex flex-col h-full">
+                  <CardHeader className="flex-shrink-0">
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-xl">{hackathon.title}</CardTitle>
                       <div className="flex gap-2">
@@ -214,30 +213,31 @@ export default function HackathonsPage() {
                       <MapPin className="h-4 w-4 mr-1" /> {hackathon.location}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <p className="text-gray-700 dark:text-gray-300 line-clamp-3">{hackathon.description}</p>
-                    <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-                      <div className="flex items-center">
-                        <Users className="h-4 w-4 mr-1" /> {participantCount} / {hackathon.maxParticipants} Participants
-                      </div>
-                      <Badge variant="outline" className="text-xs">{hackathon.theme}</Badge>
+                  <CardContent className="flex flex-col flex-1 p-6 pt-0">
+                    <div className="flex-1 min-h-0">
+                      <p className="text-gray-700 dark:text-gray-300 line-clamp-3 mb-4">{hackathon.description}</p>
                     </div>
-                    <div className="flex gap-2">
-                      <Button 
-                        className="flex-1 bg-blue-600 hover:bg-blue-700"
-                        onClick={() => handleViewDetails(hackathon.id)}
-                      >
-                        <Trophy className="h-4 w-4 mr-2" /> View Details
-                      </Button>
-                      {status === "Upcoming" && (
+                    <div className="flex-shrink-0 space-y-3 pt-4 border-t border-gray-100 dark:border-gray-800">
+                      <div className="flex items-center justify-between">
+                        <Badge variant="outline" className="text-xs">{hackathon.theme}</Badge>
+                      </div>
+                      <div className="flex gap-2">
                         <Button 
-                          variant="outline" 
-                          className="flex-1"
-                          onClick={() => handleFindTeam(hackathon.id)}
+                          className="flex-1 bg-blue-600 hover:bg-blue-700"
+                          onClick={() => handleViewDetails(hackathon.id)}
                         >
-                          <Search className="h-4 w-4 mr-2" /> Find Team
+                          <Trophy className="h-4 w-4 mr-2" /> View Details
                         </Button>
-                      )}
+                        {status === "Upcoming" && (
+                          <Button 
+                            variant="outline" 
+                            className="flex-1"
+                            onClick={() => handleFindTeam(hackathon.id)}
+                          >
+                            <Search className="h-4 w-4 mr-2" /> Find Team
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

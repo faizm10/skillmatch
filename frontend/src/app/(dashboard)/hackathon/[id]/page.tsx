@@ -250,17 +250,17 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ id: 
             </Card>
 
             {/* Rules */}
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-              <CardHeader className="border-b border-gray-100 dark:border-gray-800">
-                <CardTitle className="flex items-center text-xl">
+              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+                <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+                  <CardTitle className="flex items-center text-xl">
                   <Code className="h-5 w-5 mr-2 text-green-600" />
                   Rules & Guidelines
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6">
                 <p className="text-gray-700 dark:text-gray-300">{hackathon.rules}</p>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
           </div>
 
           {/* Sidebar: Prizes, Organizers, Sponsors */}
