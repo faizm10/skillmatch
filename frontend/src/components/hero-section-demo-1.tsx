@@ -87,7 +87,7 @@ export default function HeroSection() {
         >
           <div className="w-full overflow-hidden rounded-xl border border-gray-300 dark:border-gray-700">
             <img
-              src="/placeholder.svg?height=600&width=1200"
+              src="/image.png"
               alt="SkillMatch dashboard preview"
               className="aspect-[16/9] h-auto w-full object-cover"
               height={600}

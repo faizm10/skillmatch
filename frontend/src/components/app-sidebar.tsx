@@ -1,7 +1,18 @@
-"use client"
+"use client";
 
-import { Calendar, Home, Inbox, Search, Settings, Trophy, Users, Plus, MessageSquare, Star } from 'lucide-react'
-import { usePathname } from "next/navigation"
+import {
+  Calendar,
+  Home,
+  Inbox,
+  Search,
+  Settings,
+  Trophy,
+  Users,
+  Plus,
+  MessageSquare,
+  Star,
+} from "lucide-react";
+import { usePathname } from "next/navigation";
 
 import {
   Sidebar,
@@ -16,10 +27,16 @@ import {
   SidebarSeparator,
   SidebarFooter,
   SidebarRail,
-} from "@/components/ui/sidebar"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { ChevronDown, User2, ChevronUp } from 'lucide-react'
+} from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown, User2, ChevronUp } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 // Menu items for the sidebar
 const dashboardItems = [
@@ -43,7 +60,7 @@ const dashboardItems = [
     url: "/dashboard/settings",
     icon: Settings,
   },
-]
+];
 
 const generalItems = [
   {
@@ -56,11 +73,17 @@ const generalItems = [
     url: "#", // Placeholder for a future projects page
     icon: Trophy,
   },
-]
+];
 
 export function AppSidebar() {
-  const pathname = usePathname()
+  const pathname = usePathname();
+  const router = useRouter();
 
+  const handleLogout = () => {
+    document.cookie =
+      "username=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    router.push("/");
+  };
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -175,13 +198,7 @@ export function AppSidebar() {
                 side="top"
                 className="w-[--radix-popper-anchor-width]"
               >
-                <DropdownMenuItem>
-                  <span>Account</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Billing</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
                   <span>Sign out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -191,5 +208,5 @@ export function AppSidebar() {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
