@@ -6,3 +6,9 @@
 
 # open shell in docker: 
 `docker-compose exec backend sh`
+
+# create migration
+
+`npx prisma migrate dev --name [enter custom name]`
+
+`npx prisma generate`

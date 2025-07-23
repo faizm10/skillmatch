@@ -33,8 +33,8 @@ model Hackathon {
   id          Int      @id @default(autoincrement())
   title       String
   description String
-  date        DateTime
-  endDate     DateTime
+  date        String
+  endDate     String
   location    String
   status      String   // "Open for Registration", "Registration Closed", "In Progress", "Completed"
   theme       String
