@@ -1,60 +1,174 @@
+"use client"
+import { useEffect, useState } from "react"
+import { gql, useQuery, useMutation } from "@apollo/client"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, Users, Code, LinkIcon, MessageSquare, Plus, UserPlus, Trophy } from 'lucide-react'
 import { notFound } from "next/navigation"
 
-const mockHackathons = [
-  {
-    id: "ai-innovation-2024",
-    title: "AI Innovation Challenge 2024",
-    description: "Develop groundbreaking AI solutions for real-world problems. This hackathon focuses on leveraging the latest advancements in artificial intelligence to create impactful and scalable applications across various domains, including healthcare, education, and environmental sustainability. Participants will have access to expert mentors, cutting-edge tools, and a collaborative environment to bring their ideas to life.",
-    date: "Oct 26-28, 2024",
-    location: "Virtual",
-    status: "Open for Registration",
-    theme: "Artificial Intelligence",
-    prizes: ["$5,000 Cash", "Mentorship", "Cloud Credits"],
-    rules: "Teams of 1-4. Submissions must include a working prototype and a presentation.",
-    schedule: [
-      { time: "Oct 26, 9:00 AM", event: "Opening Ceremony & Keynote" },
-      { time: "Oct 26, 10:00 AM", event: "Team Formation & Brainstorming" },
-      { time: "Oct 27, 9:00 AM", event: "Mid-point Check-in & Workshops" },
-      { time: "Oct 28, 12:00 PM", event: "Submission Deadline" },
-      { time: "Oct 28, 2:00 PM", event: "Judging & Presentations" },
-      { time: "Oct 28, 5:00 PM", event: "Awards Ceremony" },
-    ],
-    organizers: ["Tech Innovators Inc.", "AI Guild"],
-    sponsors: ["Google Cloud", "Microsoft Azure", "NVIDIA"],
-    currentParticipants: 150,
-    maxParticipants: 200,
-    hasTeam: false, // Mock: true if user has a team for this hackathon
-  },
-  {
-    id: "web3-summit",
-    title: "Web3 Summit: Decentralized Future",
-    description: "Build the next generation of decentralized applications on blockchain. Explore DeFi, NFTs, DAOs, and more.",
-    date: "Nov 10-12, 2024",
-    location: "Hybrid (Online & NYC)",
-    status: "Registration Closed",
-    theme: "Blockchain & Decentralization",
-    prizes: ["$7,000 Crypto", "Incubator Spot", "Hardware Wallets"],
-    rules: "Teams of 1-5. Focus on innovation and security.",
-    schedule: [],
-    organizers: ["Blockchain Builders", "Decentralized Future DAO"],
-    sponsors: ["Ethereum Foundation", "Solana Labs"],
-    currentParticipants: 120,
-    maxParticipants: 120,
-    hasTeam: true,
-  },
-]
+const GET_HACKATHON = gql`
+  query GetHackathon($id: ID!) {
+    getHackathon(id: $id) {
+      id
+      title
+      description
+      date
+      endDate
+      location
+      status
+      theme
+      maxParticipants
+      prizes
+      rules
+      organizers
+      sponsors
+      participants {
+        user {
+          id
+          name
+          username
+        }
+      }
+    }
+  }
+`
 
-export default async function HackathonDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
-  const hackathon = mockHackathons.find((h) => h.id === id)
+const JOIN_HACKATHON = gql`
+  mutation JoinHackathon($username: String!, $hackathonId: ID!) {
+    joinHackathon(username: $username, hackathonId: $hackathonId) {
+      id
+      user {
+        id
+        name
+        username
+      }
+      hackathon {
+        id
+        title
+      }
+    }
+  }
+`
 
+function getCookie(name: string) {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop()?.split(";").shift() || null
+  return null
+}
+
+export default function HackathonDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const [id, setId] = useState<string | null>(null)
+  const [username, setUsername] = useState<string | null>(null)
+  const router = useRouter()
+
+  useEffect(() => {
+    const loadParams = async () => {
+      const { id: hackathonId } = await params
+      setId(hackathonId)
+    }
+    loadParams()
+    setUsername(getCookie("username"))
+  }, [params])
+
+  const { data, loading, error, refetch } = useQuery(GET_HACKATHON, {
+    variables: { id },
+    skip: !id,
+    fetchPolicy: "network-only",
+  })
+
+  const [joinHackathon, { loading: joining }] = useMutation(JOIN_HACKATHON, {
+    onCompleted: () => {
+      refetch() // Refresh the data after joining
+    },
+    onError: (error) => {
+      console.error('Error joining hackathon:', error.message)
+      alert(`Failed to join hackathon: ${error.message}`)
+    }
+  })
+
+  const handleJoinHackathon = async () => {
+    if (!username) {
+      alert('Please log in to join a hackathon')
+      router.push('/login')
+      return
+    }
+
+    try {
+      await joinHackathon({
+        variables: {
+          username,
+          hackathonId: id
+        }
+      })
+      alert('Successfully joined the hackathon!')
+    } catch (error) {
+      console.error('Error joining hackathon:', error)
+    }
+  }
+
+  if (!id) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div>
+          <p>Loading hackathon...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-neutral-900 dark:to-neutral-800">
+        <Card className="w-full max-w-md p-8 text-center">
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div>
+          <CardTitle className="text-xl">Loading Hackathon...</CardTitle>
+          <CardDescription className="mt-2">Getting hackathon details</CardDescription>
+        </Card>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-red-50 to-pink-100 dark:from-neutral-900 dark:to-red-900">
+        <Card className="w-full max-w-md p-8 text-center border-red-200 dark:border-red-800">
+          <CardTitle className="text-red-600 dark:text-red-400">Something went wrong</CardTitle>
+          <CardDescription className="mt-2 text-gray-600 dark:text-gray-400">{error.message}</CardDescription>
+          <Button onClick={() => router.push('/dashboard')} variant="destructive" className="mt-6">
+            Return to Dashboard
+          </Button>
+        </Card>
+      </div>
+    )
+  }
+
+  const hackathon = data?.getHackathon
   if (!hackathon) {
     notFound()
   }
+
+  // Check if current user is already a participant
+  const isParticipant = hackathon.participants?.some(
+    (participant: any) => participant.user.username === username
+  )
+
+  // Format dates
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric' 
+    })
+  }
+
+  const startDate = formatDate(hackathon.date)
+  const endDate = formatDate(hackathon.endDate)
+  const dateRange = `${startDate} - ${endDate}`
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900 p-8">
@@ -76,7 +190,7 @@ export default async function HackathonDetailPage({ params }: { params: Promise<
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Date</p>
-                    <p className="text-gray-900 dark:text-white">{hackathon.date}</p>
+                    <p className="text-gray-900 dark:text-white">{dateRange}</p>
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Location</p>
@@ -88,31 +202,41 @@ export default async function HackathonDetailPage({ params }: { params: Promise<
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Participants</p>
-                    <p className="text-gray-900 dark:text-white">{hackathon.currentParticipants} / {hackathon.maxParticipants}</p>
+                    <p className="text-gray-900 dark:text-white">{hackathon.participants?.length || 0} / {hackathon.maxParticipants}</p>
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <Badge variant={hackathon.status === "Open for Registration" ? "default" : "destructive"}>
                     {hackathon.status}
                   </Badge>
+                  {isParticipant && (
+                    <Badge variant="secondary">You're Registered</Badge>
+                  )}
                 </div>
                 <div className="flex gap-3 pt-4">
-                  {hackathon.status === "Open for Registration" && !hackathon.hasTeam && (
-                    <Button className="bg-blue-600 hover:bg-blue-700">
-                      <Plus className="h-4 w-4 mr-2" /> Register Now
+                  {hackathon.status === "Open for Registration" && !isParticipant && (
+                    <Button 
+                      className="bg-blue-600 hover:bg-blue-700"
+                      onClick={handleJoinHackathon}
+                      disabled={joining}
+                    >
+                      {joining ? (
+                        <>
+                          <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                          Joining...
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="h-4 w-4 mr-2" /> 
+                          Join Hackathon
+                        </>
+                      )}
                     </Button>
                   )}
-                  {hackathon.status === "Open for Registration" && (
-                    <Button variant="outline" asChild>
+                  {isParticipant && (
+                    <Button variant="secondary" asChild>
                       <a href={`/hackathon/${hackathon.id}/team`}>
                         <UserPlus className="h-4 w-4 mr-2" /> Find Teammates
-                      </a>
-                    </Button>
-                  )}
-                  {hackathon.hasTeam && (
-                    <Button variant="secondary" asChild>
-                      <a href={`/dashboard/team`}>
-                        <Users className="h-4 w-4 mr-2" /> View My Team
                       </a>
                     </Button>
                   )}
@@ -125,38 +249,28 @@ export default async function HackathonDetailPage({ params }: { params: Promise<
               </CardContent>
             </Card>
 
-            {/* Schedule */}
-            {hackathon.schedule.length > 0 && (
-              <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-                <CardHeader className="border-b border-gray-100 dark:border-gray-800">
-                  <CardTitle className="flex items-center text-xl">
-                    <Calendar className="h-5 w-5 mr-2 text-orange-600" />
-                    Schedule
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-6">
-                  <ol className="relative border-l border-gray-200 dark:border-gray-700">
-                    {hackathon.schedule.map((item, index) => (
-                      <li key={index} className="mb-6 ml-4">
-                        <div className="absolute w-3 h-3 bg-blue-600 rounded-full mt-1.5 -left-1.5 border border-white dark:border-gray-900 dark:bg-blue-900"></div>
-                        <time className="mb-1 text-sm font-normal leading-none text-gray-600 dark:text-gray-400">{item.time}</time>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{item.event}</h3>
-                      </li>
-                    ))}
-                  </ol>
-                </CardContent>
-              </Card>
-            )}
+            {/* Rules */}
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+              <CardHeader className="border-b border-gray-100 dark:border-gray-800">
+                <CardTitle className="flex items-center text-xl">
+                  <Code className="h-5 w-5 mr-2 text-green-600" />
+                  Rules & Guidelines
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <p className="text-gray-700 dark:text-gray-300">{hackathon.rules}</p>
+              </CardContent>
+            </Card>
           </div>
 
-          {/* Sidebar: Prizes, Rules, Organizers, Sponsors */}
+          {/* Sidebar: Prizes, Organizers, Sponsors */}
           <div className="space-y-6">
             <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
                 <CardTitle className="text-lg">Prizes</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                {hackathon.prizes.map((prize, index) => (
+                {hackathon.prizes.map((prize: string, index: number) => (
                   <div key={index} className="flex items-center text-gray-700 dark:text-gray-300">
                     <Trophy className="h-4 w-4 mr-2 text-yellow-500" /> {prize}
                   </div>
@@ -166,19 +280,10 @@ export default async function HackathonDetailPage({ params }: { params: Promise<
 
             <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
-                <CardTitle className="text-lg">Rules</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-700 dark:text-gray-300 text-sm">{hackathon.rules}</p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
-              <CardHeader>
                 <CardTitle className="text-lg">Organizers</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                {hackathon.organizers.map((org, index) => (
+                {hackathon.organizers.map((org: string, index: number) => (
                   <div key={index} className="flex items-center text-gray-700 dark:text-gray-300">
                     <Users className="h-4 w-4 mr-2 text-purple-600" /> {org}
                   </div>
@@ -191,7 +296,7 @@ export default async function HackathonDetailPage({ params }: { params: Promise<
                 <CardTitle className="text-lg">Sponsors</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                {hackathon.sponsors.map((sponsor, index) => (
+                {hackathon.sponsors.map((sponsor: string, index: number) => (
                   <div key={index} className="flex items-center text-gray-700 dark:text-gray-300">
                     <LinkIcon className="h-4 w-4 mr-2 text-green-600" /> {sponsor}
                   </div>
