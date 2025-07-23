@@ -122,6 +122,27 @@ const resolvers = {
         }
       });
     },
+    // updateUser: async (_, { id, input }, { prisma }) => {
+    //   const user = await prisma.user.findUnique({ where: { id: parseInt(id) } });
+    //   if (!user) {
+    //     throw new Error('User not found');
+    //   }
+      
+    //   // Check if username is being changed and if it's already taken
+    //   if (input.username && input.username !== user.username) {
+    //     const existingUser = await prisma.user.findUnique({ 
+    //       where: { username: input.username } 
+    //     });
+    //     if (existingUser) {
+    //       throw new Error('Username already taken');
+    //     }
+    //   }
+      
+    //   return await prisma.user.update({
+    //     where: { id: parseInt(id) },
+    //     data: input
+    //   });
+    // },
   },
 };
 

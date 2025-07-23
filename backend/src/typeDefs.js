@@ -16,9 +16,25 @@ const typeDefs = gql`
     bio: String
     skills: [String!]!
     interests: [String!]!
+    devpost: String
+    github: String
+    linkedin: String
+    website: String
     password: String
     createdAt: String!
     hackathons: [HackathonParticipant!]
+  }
+
+  input UpdateUserInput {
+    name: String
+    username: String
+    bio: String
+    skills: [String!]
+    interests: [String!]
+    devpost: String
+    github: String
+    linkedin: String
+    website: String
   }
 
   type Hackathon {
@@ -88,6 +104,10 @@ const typeDefs = gql`
       username: String!
       hackathonId: ID!
     ): HackathonParticipant!
+    // updateUser(
+    //   id: ID!
+    //   input: UpdateUserInput!
+    // ): User!
   }
 `;
 
