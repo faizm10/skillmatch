@@ -1,25 +1,11 @@
 "use client"
-
 import { useEffect, useState } from "react"
 import { gql, useQuery } from "@apollo/client"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { 
-  User, 
-  Mail, 
-  Calendar, 
-  Trophy, 
-  Users, 
-  Search, 
-  Settings,
-  Plus,
-  TrendingUp,
-  Award,
-  Clock,
-  Star
-} from "lucide-react"
+import { User, Mail, Calendar, Trophy, Users, Search, Settings, Plus, TrendingUp, Award, Clock, Star } from 'lucide-react'
 
 const GET_USER = gql`
   query GetUser($username: String!) {
@@ -97,10 +83,7 @@ export default function DashboardPage() {
               Please log in to access your hackathon dashboard
             </CardDescription>
           </div>
-          <Button 
-            onClick={() => router.push("/login")} 
-            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-          >
+          <Button onClick={() => router.push("/login")} className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
             Go to Login
           </Button>
         </Card>
@@ -125,9 +108,7 @@ export default function DashboardPage() {
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-red-50 to-pink-100 dark:from-neutral-900 dark:to-red-900">
         <Card className="w-full max-w-md p-8 text-center border-red-200 dark:border-red-800">
           <CardTitle className="text-red-600 dark:text-red-400">Something went wrong</CardTitle>
-          <CardDescription className="mt-2 text-gray-600 dark:text-gray-400">
-            {error.message}
-          </CardDescription>
+          <CardDescription className="mt-2 text-gray-600 dark:text-gray-400">{error.message}</CardDescription>
           <Button onClick={handleLogout} variant="destructive" className="mt-6">
             Return to Login
           </Button>
@@ -137,7 +118,6 @@ export default function DashboardPage() {
   }
 
   const user = data?.getUser
-
   if (!user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-yellow-50 to-orange-100 dark:from-neutral-900 dark:to-yellow-900">
@@ -154,32 +134,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900">
-      {/* Header */}
-      <header className="border-b border-white/20 bg-white/80 backdrop-blur-sm dark:border-neutral-700/50 dark:bg-neutral-900/80">
-        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-indigo-600">
-                <Trophy className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">SkillMatch</h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Hackathon Dashboard</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <Button variant="outline" size="sm">
-                <Settings className="h-4 w-4 mr-2" />
-                Settings
-              </Button>
-              <Button onClick={handleLogout} variant="destructive" size="sm">
-                Logout
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
+      {/* The header with SidebarTrigger is now in app/(dashboard)/layout.tsx */}
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Welcome Section */}
         <div className="mb-8">
@@ -207,7 +162,6 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </div>
-
         {/* Stats Grid */}
         <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-shadow">
@@ -221,7 +175,6 @@ export default function DashboardPage() {
               </div>
             </CardContent>
           </Card>
-
           <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -233,7 +186,6 @@ export default function DashboardPage() {
               </div>
             </CardContent>
           </Card>
-
           <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -245,7 +197,6 @@ export default function DashboardPage() {
               </div>
             </CardContent>
           </Card>
-
           <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -258,7 +209,6 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </div>
-
         {/* Main Content Grid */}
         <div className="grid gap-8 lg:grid-cols-3">
           {/* Profile Section */}
@@ -273,24 +223,17 @@ export default function DashboardPage() {
               <CardContent className="p-6">
                 <div className="space-y-6">
                   <div className="flex items-center space-x-4">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-xl font-bold text-white">
-                      {user.name.charAt(0).toUpperCase()}
-                    </div>
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-xl font-bold text-white">{user.name.charAt(0).toUpperCase()}</div>
                     <div>
                       <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{user.name}</h3>
-                      <p className="text-gray-600 dark:text-gray-400 flex items-center">
-                        <Mail className="h-4 w-4 mr-1" />
-                        {user.email}
-                      </p>
+                      <p className="text-gray-600 dark:text-gray-400 flex items-center"><Mail className="h-4 w-4 mr-1" />{user.email}</p>
                       <p className="text-gray-600 dark:text-gray-400">@{user.username}</p>
                     </div>
                   </div>
-
                   <div>
                     <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Bio</h4>
                     <p className="text-gray-700 dark:text-gray-300">{user.bio || "No bio provided yet. Add one to help teammates get to know you better!"}</p>
                   </div>
-
                   <div>
                     <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Skills</h4>
                     <div className="flex flex-wrap gap-2">
@@ -308,7 +251,6 @@ export default function DashboardPage() {
                       )}
                     </div>
                   </div>
-
                   <div>
                     <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Interests</h4>
                     <div className="flex flex-wrap gap-2">
@@ -326,7 +268,6 @@ export default function DashboardPage() {
                       )}
                     </div>
                   </div>
-
                   <div className="flex space-x-3 pt-4">
                     <Button className="bg-blue-600 hover:bg-blue-700">
                       <Settings className="h-4 w-4 mr-2" />
@@ -340,7 +281,6 @@ export default function DashboardPage() {
                 </div>
               </CardContent>
             </Card>
-
             {/* Recent Activity */}
             <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader className="border-b border-gray-100 dark:border-gray-800">
@@ -353,29 +293,24 @@ export default function DashboardPage() {
                 <div className="space-y-4">
                   {mockRecentActivity.map((activity) => (
                     <div key={activity.id} className="flex items-center space-x-4 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
-                      <div className={`flex h-10 w-10 items-center justify-center rounded-full ${
-                        activity.type === 'hackathon' ? 'bg-blue-100 text-blue-600' :
-                        activity.type === 'team' ? 'bg-green-100 text-green-600' :
-                        'bg-purple-100 text-purple-600'
-                      }`}>
+                      <div className={`flex h-10 w-10 items-center justify-center rounded-full ${activity.type === 'hackathon' ? 'bg-blue-100 text-blue-600' :
+                          activity.type === 'team' ? 'bg-green-100 text-green-600' :
+                          'bg-purple-100 text-purple-600'}`}>
                         {activity.type === 'hackathon' ? <Calendar className="h-5 w-5" /> :
-                         activity.type === 'team' ? <Users className="h-5 w-5" /> :
-                         <Award className="h-5 w-5" />}
+                          activity.type === 'team' ? <Users className="h-5 w-5" /> :
+                          <Award className="h-5 w-5" />}
                       </div>
                       <div className="flex-1">
                         <p className="font-medium text-gray-900 dark:text-white">{activity.title}</p>
                         <p className="text-sm text-gray-600 dark:text-gray-400">{activity.date}</p>
                       </div>
-                      <Badge variant={activity.status === 'completed' ? 'default' : 'secondary'}>
-                        {activity.status}
-                      </Badge>
+                      <Badge variant={activity.status === 'completed' ? 'default' : 'secondary'}>{activity.status}</Badge>
                     </div>
                   ))}
                 </div>
               </CardContent>
             </Card>
           </div>
-
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Quick Actions */}
@@ -398,7 +333,6 @@ export default function DashboardPage() {
                 </Button>
               </CardContent>
             </Card>
-
             {/* Recommended Teammates */}
             <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
               <CardHeader>
@@ -412,15 +346,11 @@ export default function DashboardPage() {
                   <div key={person.id} className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-medium text-gray-900 dark:text-white">{person.name}</h4>
-                      <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
-                        {person.match}% match
-                      </Badge>
+                      <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">{person.match}% match</Badge>
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {person.skills.slice(0, 2).map((skill) => (
-                        <Badge key={skill} variant="outline" className="text-xs">
-                          {skill}
-                        </Badge>
+                        <Badge key={skill} variant="outline" className="text-xs">{skill}</Badge>
                       ))}
                       {person.skills.length > 2 && (
                         <Badge variant="outline" className="text-xs">
