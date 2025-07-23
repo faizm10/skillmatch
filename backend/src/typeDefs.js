@@ -18,11 +18,42 @@ const typeDefs = gql`
     interests: [String!]!
     password: String
     createdAt: String!
+    hackathons: [HackathonParticipant!]
+  }
+
+  type Hackathon {
+    id: ID!
+    title: String!
+    description: String!
+    date: String!
+    endDate: String!
+    location: String!
+    status: String!
+    theme: String!
+    maxParticipants: Int!
+    prizes: [String!]!
+    rules: String!
+    organizers: [String!]!
+    sponsors: [String!]!
+    createdAt: String!
+    participants: [HackathonParticipant!]
+  }
+
+  type HackathonParticipant {
+    id: ID!
+    userId: Int!
+    hackathonId: Int!
+    joinedAt: String!
+    user: User!
+    hackathon: Hackathon!
   }
 
   type Query {
     getUsers: [User!]!
     getUser(username: String!): User
+    getHackathons: [Hackathon!]!
+    getHackathon(id: ID!): Hackathon
+    getUserHackathons(username: String!): [Hackathon!]!
   }
 
   type Mutation {
@@ -39,6 +70,24 @@ const typeDefs = gql`
       username: String!
       password: String!
     ): User!
+    createHackathon(
+      title: String!
+      description: String!
+      date: String!
+      endDate: String!
+      location: String!
+      status: String!
+      theme: String!
+      maxParticipants: Int!
+      prizes: [String!]!
+      rules: String!
+      organizers: [String!]!
+      sponsors: [String!]!
+    ): Hackathon!
+    joinHackathon(
+      username: String!
+      hackathonId: ID!
+    ): HackathonParticipant!
   }
 `;
 

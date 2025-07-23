@@ -11,7 +11,52 @@ const resolvers = {
       return await prisma.user.findMany();
     },
     getUser: async (_, { username }, { prisma }) => {
-      return await prisma.user.findUnique({ where: { username } });
+      return await prisma.user.findUnique({ 
+        where: { username },
+        include: {
+          hackathons: {
+            include: {
+              hackathon: true
+            }
+          }
+        }
+      });
+    },
+    getHackathons: async (_, __, { prisma }) => {
+      return await prisma.hackathon.findMany({
+        include: {
+          participants: {
+            include: {
+              user: true
+            }
+          }
+        }
+      });
+    },
+    getHackathon: async (_, { id }, { prisma }) => {
+      return await prisma.hackathon.findUnique({
+        where: { id: parseInt(id) },
+        include: {
+          participants: {
+            include: {
+              user: true
+            }
+          }
+        }
+      });
+    },
+    getUserHackathons: async (_, { username }, { prisma }) => {
+      const user = await prisma.user.findUnique({
+        where: { username },
+        include: {
+          hackathons: {
+            include: {
+              hackathon: true
+            }
+          }
+        }
+      });
+      return user ? user.hackathons.map(hp => hp.hackathon) : [];
     },
   },
   Mutation: {
@@ -28,6 +73,54 @@ const resolvers = {
         throw new Error('Invalid password');
       }
       return user;
+    },
+    createHackathon: async (_, args, { prisma }) => {
+      return await prisma.hackathon.create({ 
+        data: {
+          ...args,
+          date: new Date(args.date),
+          endDate: new Date(args.endDate)
+        }
+      });
+    },
+    joinHackathon: async (_, { username, hackathonId }, { prisma }) => {
+      const user = await prisma.user.findUnique({ where: { username } });
+      if (!user) {
+        throw new Error('User not found');
+      }
+      
+      // Check if hackathon exists
+      const hackathon = await prisma.hackathon.findUnique({
+        where: { id: parseInt(hackathonId) }
+      });
+      if (!hackathon) {
+        throw new Error('Hackathon not found');
+      }
+      
+      // Check if user is already a participant
+      const existingParticipant = await prisma.hackathonParticipant.findUnique({
+        where: {
+          userId_hackathonId: {
+            userId: user.id,
+            hackathonId: parseInt(hackathonId)
+          }
+        }
+      });
+      
+      if (existingParticipant) {
+        throw new Error('User is already a participant in this hackathon');
+      }
+      
+      return await prisma.hackathonParticipant.create({
+        data: {
+          userId: user.id,
+          hackathonId: parseInt(hackathonId)
+        },
+        include: {
+          user: true,
+          hackathon: true
+        }
+      });
     },
   },
 };

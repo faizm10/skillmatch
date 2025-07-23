@@ -24,5 +24,41 @@ model User {
   skills     String[]
   interests  String[]
   createdAt  DateTime @default(now())
+  
+  // Relationships
+  hackathons HackathonParticipant[]
+}
+
+model Hackathon {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  date        DateTime
+  endDate     DateTime
+  location    String
+  status      String   // "Open for Registration", "Registration Closed", "In Progress", "Completed"
+  theme       String
+  maxParticipants Int
+  prizes      String[]
+  rules       String
+  organizers  String[]
+  sponsors    String[]
+  createdAt   DateTime @default(now())
+  
+  // Relationships
+  participants HackathonParticipant[]
+}
+
+model HackathonParticipant {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  hackathonId Int
+  joinedAt    DateTime  @default(now())
+  
+  // Relationships
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hackathon   Hackathon @relation(fields: [hackathonId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, hackathonId])
 }
 
