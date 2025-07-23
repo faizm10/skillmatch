@@ -48,8 +48,9 @@ const mockHackathons = [
   },
 ]
 
-export default function HackathonDetailPage({ params }: { params: { id: string } }) {
-  const hackathon = mockHackathons.find((h) => h.id === params.id)
+export default async function HackathonDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const hackathon = mockHackathons.find((h) => h.id === id)
 
   if (!hackathon) {
     notFound()
