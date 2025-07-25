@@ -150,7 +150,12 @@ const calculateRecentActivity = (user: any) => {
 export default function DashboardPage() {
   const [username, setUsername] = useState<string | null>(null);
   const router = useRouter();
-
+  const clickSettings = () => {
+  // This function will handle the click event for the settings button
+  
+  // For now, we can just redirect to a settings page
+  router.push("/dashboard/settings");
+}
   useEffect(() => {
     setUsername(getCookie("username"));
   }, []);
@@ -431,7 +436,8 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div className="flex space-x-3 pt-4">
-                    <Button className="bg-blue-600 hover:bg-blue-700">
+                    
+                    <Button className="bg-blue-600 hover:bg-blue-700" onClick={clickSettings} >
                       <Settings className="h-4 w-4 mr-2" />
                       Edit Profile
                     </Button>
