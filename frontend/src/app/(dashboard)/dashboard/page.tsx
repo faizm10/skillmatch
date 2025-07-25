@@ -1,11 +1,31 @@
-"use client"
-import { useEffect, useState } from "react"
-import { gql, useQuery } from "@apollo/client"
-import { useRouter } from "next/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { User, Mail, Calendar, Trophy, Users, Search, Settings, Plus, TrendingUp, Award, Clock, Star } from 'lucide-react'
+"use client";
+import { useEffect, useState } from "react";
+import { gql, useQuery } from "@apollo/client";
+import { useRouter } from "next/navigation";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  User,
+  Mail,
+  Calendar,
+  Trophy,
+  Users,
+  Search,
+  Settings,
+  Plus,
+  TrendingUp,
+  Award,
+  Clock,
+  Star,
+} from "lucide-react";
+import Link from "next/link";
 
 const GET_USER = gql`
   query GetUser($username: String!) {
@@ -18,55 +38,134 @@ const GET_USER = gql`
       skills
       interests
       createdAt
+      hackathons {
+        id
+        joinedAt
+        hackathon {
+          id
+          title
+          status
+          date
+          endDate
+        }
+      }
     }
   }
-`
+`;
 
 function getCookie(name: string) {
-  const value = `; ${document.cookie}`
-  const parts = value.split(`; ${name}=`)
-  if (parts.length === 2) return parts.pop()?.split(";").shift() || null
-  return null
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
+  return null;
 }
 
-// Mock data for demonstration
-const mockStats = {
-  hackathonsJoined: 12,
-  teamsFormed: 8,
-  projectsCompleted: 15,
-  matchScore: 94
-}
-
-const mockRecentActivity = [
-  { id: 1, type: "hackathon", title: "AI Innovation Challenge 2024", date: "2 days ago", status: "registered" },
-  { id: 2, type: "team", title: "Joined team 'Code Crusaders'", date: "5 days ago", status: "active" },
-  { id: 3, type: "project", title: "Submitted 'EcoTrack App'", date: "1 week ago", status: "completed" }
-]
+// Mock data for recommendations (will be replaced with real data later)
 
 const mockRecommendations = [
-  { id: 1, name: "Sarah Chen", skills: ["React", "Python", "UI/UX"], match: 92 },
-  { id: 2, name: "Alex Rodriguez", skills: ["Node.js", "GraphQL", "AWS"], match: 89 },
-  { id: 3, name: "Emma Thompson", skills: ["Machine Learning", "TensorFlow"], match: 87 }
-]
+  {
+    id: 1,
+    name: "Sarah Chen",
+    skills: ["React", "Python", "UI/UX"],
+    match: 92,
+  },
+  {
+    id: 2,
+    name: "Alex Rodriguez",
+    skills: ["Node.js", "GraphQL", "AWS"],
+    match: 89,
+  },
+  {
+    id: 3,
+    name: "Emma Thompson",
+    skills: ["Machine Learning", "TensorFlow"],
+    match: 87,
+  },
+];
+
+// Calculate stats from user data
+const calculateUserStats = (user: any) => {
+  if (!user || !user.hackathons) {
+    return {
+      hackathonsJoined: 0,
+      teamsFormed: 0, // This would need team data from backend
+      projectsCompleted: 0, // This would need project data from backend
+      matchScore: 0,
+    };
+  }
+
+  const hackathonsJoined = user.hackathons.length;
+  const completedHackathons = user.hackathons.filter(
+    (hp: any) => hp.hackathon.status === "Completed"
+  ).length;
+
+  // Calculate a simple match score based on skills and interests
+  const skillCount = user.skills ? user.skills.length : 0;
+  const interestCount = user.interests ? user.interests.length : 0;
+  const matchScore = Math.min(
+    100,
+    Math.max(0, skillCount * 5 + interestCount * 3 + hackathonsJoined * 2)
+  );
+
+  return {
+    hackathonsJoined,
+    teamsFormed: Math.floor(hackathonsJoined * 0.7), // Mock calculation for now
+    projectsCompleted: completedHackathons,
+    matchScore,
+  };
+};
+
+// Format dates like in hackathons page
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
+// Calculate recent activity from user data
+const calculateRecentActivity = (user: any) => {
+  if (!user || !user.hackathons) {
+    return [];
+  }
+
+  return user.hackathons
+    .slice(0, 5) // Get last 5 hackathons
+    .map((hp: any, index: number) => ({
+      id: hp.id,
+      type: "hackathon" as const,
+      title: hp.hackathon.title,
+      // date: formatDate(hp.joinedAt), // Format the joinedAt date properly
+      status: hp.hackathon.status.toLowerCase(),
+      hackathonId: hp.hackathon.id,
+    }))
+    .sort(
+      (a: any, b: any) =>
+        new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+};
 
 export default function DashboardPage() {
-  const [username, setUsername] = useState<string | null>(null)
-  const router = useRouter()
+  const [username, setUsername] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
-    setUsername(getCookie("username"))
-  }, [])
+    setUsername(getCookie("username"));
+  }, []);
 
   const { data, loading, error } = useQuery(GET_USER, {
     variables: { username },
     skip: !username,
     fetchPolicy: "network-only",
-  })
+  });
 
   const handleLogout = () => {
-    document.cookie = "username=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
-    router.push("/login")
-  }
+    document.cookie =
+      "username=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    router.push("/login");
+  };
 
   if (!username) {
     return (
@@ -83,12 +182,15 @@ export default function DashboardPage() {
               Please log in to access your hackathon dashboard
             </CardDescription>
           </div>
-          <Button onClick={() => router.push("/login")} className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+          <Button
+            onClick={() => router.push("/login")}
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+          >
             Go to Login
           </Button>
         </Card>
       </div>
-    )
+    );
   }
 
   if (loading) {
@@ -97,40 +199,53 @@ export default function DashboardPage() {
         <Card className="w-full max-w-md p-8 text-center">
           <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div>
           <CardTitle className="text-xl">Loading Dashboard...</CardTitle>
-          <CardDescription className="mt-2">Getting your latest data</CardDescription>
+          <CardDescription className="mt-2">
+            Getting your latest data
+          </CardDescription>
         </Card>
       </div>
-    )
+    );
   }
 
   if (error) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-red-50 to-pink-100 dark:from-neutral-900 dark:to-red-900">
         <Card className="w-full max-w-md p-8 text-center border-red-200 dark:border-red-800">
-          <CardTitle className="text-red-600 dark:text-red-400">Something went wrong</CardTitle>
-          <CardDescription className="mt-2 text-gray-600 dark:text-gray-400">{error.message}</CardDescription>
+          <CardTitle className="text-red-600 dark:text-red-400">
+            Something went wrong
+          </CardTitle>
+          <CardDescription className="mt-2 text-gray-600 dark:text-gray-400">
+            {error.message}
+          </CardDescription>
           <Button onClick={handleLogout} variant="destructive" className="mt-6">
             Return to Login
           </Button>
         </Card>
       </div>
-    )
+    );
   }
 
-  const user = data?.getUser
+  const user = data?.getUser;
   if (!user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-yellow-50 to-orange-100 dark:from-neutral-900 dark:to-yellow-900">
         <Card className="w-full max-w-md p-8 text-center">
-          <CardTitle className="text-yellow-600 dark:text-yellow-400">Profile Not Found</CardTitle>
-          <CardDescription className="mt-2">We couldn't find your profile data</CardDescription>
+          <CardTitle className="text-yellow-600 dark:text-yellow-400">
+            Profile Not Found
+          </CardTitle>
+          <CardDescription className="mt-2">
+            We couldn't find your profile data
+          </CardDescription>
           <Button onClick={handleLogout} variant="outline" className="mt-6">
             Return to Login
           </Button>
         </Card>
       </div>
-    )
+    );
   }
+
+  const userStats = calculateUserStats(user);
+  const recentActivity = calculateRecentActivity(user);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-neutral-900 dark:via-neutral-800 dark:to-neutral-900">
@@ -142,18 +257,26 @@ export default function DashboardPage() {
             <CardContent className="p-8">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-3xl font-bold mb-2">Welcome back, {user.name}! 👋</h2>
-                  <p className="text-blue-100 text-lg">Ready to build something amazing?</p>
+                  <h2 className="text-3xl font-bold mb-2">
+                    Welcome back, {user.name}! 👋
+                  </h2>
+                  <p className="text-blue-100 text-lg">
+                    Ready to build something amazing?
+                  </p>
                 </div>
                 <div className="hidden sm:block">
                   <div className="flex items-center space-x-4">
                     <div className="text-center">
-                      <div className="text-2xl font-bold">{mockStats.matchScore}%</div>
+                      <div className="text-2xl font-bold">
+                        {userStats.matchScore}%
+                      </div>
                       <div className="text-xs text-blue-200">Match Score</div>
                     </div>
                     <div className="h-12 w-px bg-blue-400"></div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold">{mockStats.hackathonsJoined}</div>
+                      <div className="text-2xl font-bold">
+                        {userStats.hackathonsJoined}
+                      </div>
                       <div className="text-xs text-blue-200">Hackathons</div>
                     </div>
                   </div>
@@ -168,8 +291,12 @@ export default function DashboardPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{mockStats.hackathonsJoined}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Hackathons Joined</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {userStats.hackathonsJoined}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Hackathons Joined
+                  </p>
                 </div>
                 <Calendar className="h-8 w-8 text-blue-600" />
               </div>
@@ -179,8 +306,12 @@ export default function DashboardPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{mockStats.teamsFormed}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Teams Formed</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {userStats.teamsFormed}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Teams Formed
+                  </p>
                 </div>
                 <Users className="h-8 w-8 text-green-600" />
               </div>
@@ -190,8 +321,12 @@ export default function DashboardPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{mockStats.projectsCompleted}</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Projects Done</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {userStats.projectsCompleted}
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Projects Done
+                  </p>
                 </div>
                 <Award className="h-8 w-8 text-purple-600" />
               </div>
@@ -201,8 +336,12 @@ export default function DashboardPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{mockStats.matchScore}%</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Match Score</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {userStats.matchScore}%
+                  </p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Match Score
+                  </p>
                 </div>
                 <TrendingUp className="h-8 w-8 text-orange-600" />
               </div>
@@ -223,19 +362,35 @@ export default function DashboardPage() {
               <CardContent className="p-6">
                 <div className="space-y-6">
                   <div className="flex items-center space-x-4">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-xl font-bold text-white">{user.name.charAt(0).toUpperCase()}</div>
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-xl font-bold text-white">
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
                     <div>
-                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{user.name}</h3>
-                      <p className="text-gray-600 dark:text-gray-400 flex items-center"><Mail className="h-4 w-4 mr-1" />{user.email}</p>
-                      <p className="text-gray-600 dark:text-gray-400">@{user.username}</p>
+                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                        {user.name}
+                      </h3>
+                      <p className="text-gray-600 dark:text-gray-400 flex items-center">
+                        <Mail className="h-4 w-4 mr-1" />
+                        {user.email}
+                      </p>
+                      <p className="text-gray-600 dark:text-gray-400">
+                        @{user.username}
+                      </p>
                     </div>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Bio</h4>
-                    <p className="text-gray-700 dark:text-gray-300">{user.bio || "No bio provided yet. Add one to help teammates get to know you better!"}</p>
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                      Bio
+                    </h4>
+                    <p className="text-gray-700 dark:text-gray-300">
+                      {user.bio ||
+                        "No bio provided yet. Add one to help teammates get to know you better!"}
+                    </p>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Skills</h4>
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
+                      Skills
+                    </h4>
                     <div className="flex flex-wrap gap-2">
                       {user.skills && user.skills.length > 0 ? (
                         user.skills.map((skill: string) => (
@@ -247,12 +402,17 @@ export default function DashboardPage() {
                           </Badge>
                         ))
                       ) : (
-                        <p className="text-gray-500 italic">No skills listed yet. Add some to help others find you!</p>
+                        <p className="text-gray-500 italic">
+                          No skills listed yet. Add some to help others find
+                          you!
+                        </p>
                       )}
                     </div>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Interests</h4>
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
+                      Interests
+                    </h4>
                     <div className="flex flex-wrap gap-2">
                       {user.interests && user.interests.length > 0 ? (
                         user.interests.map((interest: string) => (
@@ -264,7 +424,9 @@ export default function DashboardPage() {
                           </Badge>
                         ))
                       ) : (
-                        <p className="text-gray-500 italic">No interests listed yet. Share what excites you!</p>
+                        <p className="text-gray-500 italic">
+                          No interests listed yet. Share what excites you!
+                        </p>
                       )}
                     </div>
                   </div>
@@ -291,22 +453,57 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-4">
-                  {mockRecentActivity.map((activity) => (
-                    <div key={activity.id} className="flex items-center space-x-4 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
-                      <div className={`flex h-10 w-10 items-center justify-center rounded-full ${activity.type === 'hackathon' ? 'bg-blue-100 text-blue-600' :
-                          activity.type === 'team' ? 'bg-green-100 text-green-600' :
-                          'bg-purple-100 text-purple-600'}`}>
-                        {activity.type === 'hackathon' ? <Calendar className="h-5 w-5" /> :
-                          activity.type === 'team' ? <Users className="h-5 w-5" /> :
-                          <Award className="h-5 w-5" />}
+                  {recentActivity.length > 0 ? (
+                    recentActivity.map((activity: any) => (
+                      <div
+                        key={activity.id}
+                        className="flex items-center space-x-4 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50"
+                      >
+                        <div
+                          className={`flex h-10 w-10 items-center justify-center rounded-full ${
+                            activity.type === "hackathon"
+                              ? "bg-blue-100 text-blue-600"
+                              : activity.type === "team"
+                              ? "bg-green-100 text-green-600"
+                              : "bg-purple-100 text-purple-600"
+                          }`}
+                        >
+                          {activity.type === "hackathon" ? (
+                            <Calendar className="h-5 w-5" />
+                          ) : activity.type === "team" ? (
+                            <Users className="h-5 w-5" />
+                          ) : (
+                            <Award className="h-5 w-5" />
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-900 dark:text-white">
+                            {activity.title}
+                          </p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            {activity.date}
+                          </p>
+                        </div>
+                        <Badge
+                          variant={
+                            activity.status === "completed"
+                              ? "default"
+                              : "secondary"
+                          }
+                        >
+                          {activity.status}
+                        </Badge>
                       </div>
-                      <div className="flex-1">
-                        <p className="font-medium text-gray-900 dark:text-white">{activity.title}</p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{activity.date}</p>
-                      </div>
-                      <Badge variant={activity.status === 'completed' ? 'default' : 'secondary'}>{activity.status}</Badge>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                      <Calendar className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                      <p>No recent activity</p>
+                      <p className="text-sm">
+                        Join your first hackathon to see activity here!
+                      </p>
                     </div>
-                  ))}
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -319,18 +516,22 @@ export default function DashboardPage() {
                 <CardTitle className="text-lg">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Join Hackathon
-                </Button>
-                <Button variant="outline" className="w-full">
-                  <Search className="h-4 w-4 mr-2" />
-                  Find Teammates
-                </Button>
-                <Button variant="outline" className="w-full">
+                <a href="/join">
+                  <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Join Hackathon
+                  </Button>
+                </a>
+                <a href="/dashboard/hackathons">
+                  <Button variant="outline" className="w-full">
+                    <Search className="h-4 w-4 mr-2" />
+                    Find Teammates
+                  </Button>
+                </a>
+                {/* <Button variant="outline" className="w-full">
                   <Trophy className="h-4 w-4 mr-2" />
                   Browse Projects
-                </Button>
+                </Button> */}
               </CardContent>
             </Card>
             {/* Recommended Teammates */}
@@ -343,14 +544,27 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {mockRecommendations.map((person) => (
-                  <div key={person.id} className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                  <div
+                    key={person.id}
+                    className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                  >
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium text-gray-900 dark:text-white">{person.name}</h4>
-                      <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">{person.match}% match</Badge>
+                      <h4 className="font-medium text-gray-900 dark:text-white">
+                        {person.name}
+                      </h4>
+                      <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                        {person.match}% match
+                      </Badge>
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {person.skills.slice(0, 2).map((skill) => (
-                        <Badge key={skill} variant="outline" className="text-xs">{skill}</Badge>
+                        <Badge
+                          key={skill}
+                          variant="outline"
+                          className="text-xs"
+                        >
+                          {skill}
+                        </Badge>
                       ))}
                       {person.skills.length > 2 && (
                         <Badge variant="outline" className="text-xs">
@@ -369,5 +583,5 @@ export default function DashboardPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

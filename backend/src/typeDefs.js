@@ -104,10 +104,6 @@ const typeDefs = gql`
       username: String!
       hackathonId: ID!
     ): HackathonParticipant!
-    // updateUser(
-    //   id: ID!
-    //   input: UpdateUserInput!
-    // ): User!
   }
 `;
 
