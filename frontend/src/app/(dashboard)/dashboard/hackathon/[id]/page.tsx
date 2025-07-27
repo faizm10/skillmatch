@@ -29,6 +29,12 @@ const GET_HACKATHON = gql`
           id
           name
           username
+          bio
+          skills
+          interests
+          github
+          linkedin
+          website
         }
       }
     }
@@ -235,13 +241,13 @@ export default function HackathonDetailPage({ params }: { params: Promise<{ id: 
                   )}
                   {isParticipant && (
                     <Button variant="secondary" asChild>
-                      <a href={`/hackathon/${hackathon.id}/team`}>
+                      <a href={`/dashboard/hackathon/${hackathon.id}/team`}>
                         <UserPlus className="h-4 w-4 mr-2" /> Find Teammates
                       </a>
                     </Button>
                   )}
                   <Button variant="ghost" asChild>
-                    <a href={`/hackathon/${hackathon.id}/chat`}>
+                    <a href={`/dashboard/hackathon/${hackathon.id}/chat`}>
                       <MessageSquare className="h-4 w-4 mr-2" /> Chat
                     </a>
                   </Button>

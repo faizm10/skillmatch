@@ -11,8 +11,8 @@ async function main() {
     title: "Hack the 6ix 2025",
     description:
       "Toronto's largest summer student-run hackathon—build, collaborate, and innovate over a 36‑hour weekend at York University.",
-    date: new Date("2025-07-18T09:00:00Z"),
-    endDate: new Date("2025-07-20T18:00:00Z"),
+    date: "2025-07-18T09:00:00Z",
+    endDate: "2025-07-20T18:00:00Z",
     location: "Toronto, ON (York University)",
     status: "Open for Registration",
     theme: "General Innovation",
@@ -26,8 +26,8 @@ async function main() {
     title: "Hack the North 2025",
     description:
       "Canada’s largest collegiate hackathon—36 hours of building, workshops, and mentorship for over 1,000 hackers at University of Waterloo.",
-    date: new Date("2025-09-12T09:00:00Z"),
-    endDate: new Date("2025-09-14T18:00:00Z"),
+    date: "2025-09-12T09:00:00Z",
+    endDate: "2025-09-14T18:00:00Z",
     location: "Waterloo, ON (University of Waterloo)",
     status: "Open for Registration",
     theme: "General Innovation",
@@ -41,8 +41,8 @@ async function main() {
     title: "TerraHacks 2025",
     description:
       "A sustainability-themed hackathon focused on green tech—36 hours of building eco-friendly solutions at Toronto Metropolitan University.",
-    date: new Date("2025-08-01T09:00:00Z"),
-    endDate: new Date("2025-08-03T18:00:00Z"),
+    date: "2025-08-01T09:00:00Z",
+    endDate: "2025-08-03T18:00:00Z",
     location: "Toronto, ON (Toronto Metropolitan University)",
     status: "Open for Registration",
     theme: "Environmental Technology",

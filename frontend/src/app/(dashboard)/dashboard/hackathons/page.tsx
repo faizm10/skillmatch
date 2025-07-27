@@ -53,11 +53,11 @@ export default function HackathonsPage() {
   })
 
   const handleViewDetails = (hackathonId: string) => {
-    router.push(`/hackathon/${hackathonId}`)
+    router.push(`/dashboard/hackathon/${hackathonId}`)
   }
 
   const handleFindTeam = (hackathonId: string) => {
-    router.push(`/hackathon/${hackathonId}/team`)
+    router.push(`/dashboard/hackathon/${hackathonId}/team`)
   }
 
   // Format dates
