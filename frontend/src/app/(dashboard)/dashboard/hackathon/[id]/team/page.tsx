@@ -4,3 +4,4 @@ export default async function HackathonTeamPage({ params }: { params: Promise<{ 
   const { id } = await params
   return <TeamPage hackathonId={id} />
 } 
+
