@@ -107,7 +107,7 @@ export default function JoinHackathonPage() {
   };
 
   const handleViewDetails = (hackathonId: string) => {
-    router.push(`/hackathon/${hackathonId}`);
+    router.push(`/dashboard/hackathon/${hackathonId}`);
   };
 
   // Filter hackathons based on search term
